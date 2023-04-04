@@ -7,7 +7,6 @@ import {
     GraphQLNonNull
 } from 'graphql';
 import {getNews} from "../api/api";
-import {query, response} from "express";
 const mockArticles: any[] = []
 
 const Article = new GraphQLObjectType({
