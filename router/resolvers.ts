@@ -1,64 +1,112 @@
-import { UserController } from '../controllers/user-controller';
+import { UserController } from "../controllers/user-controller.js";
+import { NewsController } from "../controllers/news-controller.js";
+import { Context } from "../app.js";
 const userController = new UserController();
-const resolvers = {
-    Query: {
-        user: (parent, args, contextValue, info) =>
-            {
+const newsController = new NewsController();
 
-                userController.getUser();
-                // return data from database having his JWT Token
-            }
-        ,
-        getFavourites: (parent, args, contextValue, info) => ({
-            // return data from database having his JWT Token
-        }),
-        logout: (parent, args, contextValue, info) => true,
-        refresh: (parent, args, contextValue, info) => ({
-            // logic for refreshing JWT Token
-        }),
+interface logInOutArgs {
+  email: string;
+  password: string;
+}
+interface lastNewsQuery {
+  query: string;
+  language: string;
+  page: string;
+  pageSize: string;
+}
+interface User {
+  email: String;
+  password: String;
+  isActivated: Boolean;
+  activationLink: String;
+}
+interface Article {
+  User: User;
+  title: String;
+  author: String;
+  description: String;
+  url: String;
+  urlToImage: String;
+  publishedAt: String;
+  content: String;
+}
+export const resolvers = {
+  Query: {
+    user: (parent: any, args: any, context: Context, info: any) => {
+      const token = context.jwtToken;
+      if (!token) return;
+      const user = userController.getUser(token);
+      return user;
     },
-    Mutation: {
-        signup: (_, {email, password}) => ({
-            user: {
-                email,
-                password,
-                isActivated: false,
-                activationLink: "https://example.com/activate",
-            },
-            token: "token"
-        }),
-        login: (_, {email, password}) => ({
-            user: {
-                email,
-                password,
-                isActivated: true,
-                activationLink: null,
-            },
-            token: "token"
-        }),
-        activate: (_, {link}) => true,
-        latestNews: (_, {query, language, page, pageSize}) => ([
-            {
-                User: null,
-                title: "Example Article 3",
-                author: "John Smith",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                url: "https://example.com/article-3",
-                urlToImage: "https://example.com/article-3.jpg",
-                publishedAt: "2023-04-11T11:30:00Z",
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            },
-            {
-                User: null,
-                title: "Example Article 4",
-                author: "Jane Doe",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                url: "https://example.com/article-4",
-                urlToImage: "https://example.com/article-4.jpg
-                publishedAt: "2023-04-11T12:00:00Z",
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            }
-        ]),
-        addFavourite: (_, {article}) => true,
-    }
+    favourites: (parent: any, args: any, context: Context, info: any) => {
+      // const token = context.jwtToken;
+      // if(!token) return;
+      // const favourites  = userController.getFavourites(token);
+      // return favourites;
+      const article = {
+        user: {
+          email: "chuj",
+          password: "chuj",
+          isActivated: true,
+          activationLink: "chuj",
+        },
+        articles: [
+          {
+            title: "Example Article",
+            author: "Jane Smith",
+            description:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            url: "http://example.com/article",
+            urlToImage: "http://example.com/article/image.jpg",
+            publishedAt: "2023-04-12T10:00:00.000Z",
+            content:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod urna a tellus convallis lobortis. Proin et velit urna. Donec laoreet, velit id fringilla consectetur, lectus est porta dolor, vel aliquam mi urna nec nunc. Integer rhoncus quam vel arcu maximus luctus. Duis finibus mauris enim, ac sagittis eros feugiat sit amet. Morbi quis mauris non odio congue interdum vel et velit. Nullam at maximus tellus.",
+          },
+          {
+            title: "Example Article",
+            author: "Jane Smith",
+            description:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            url: "http://example.com/article",
+            urlToImage: "http://example.com/article/image.jpg",
+            publishedAt: "2023-04-12T10:00:00.000Z",
+            content:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod urna a tellus convallis lobortis. Proin et velit urna. Donec laoreet, velit id fringilla consectetur, lectus est porta dolor, vel aliquam mi urna nec nunc. Integer rhoncus quam vel arcu maximus luctus. Duis finibus mauris enim, ac sagittis eros feugiat sit amet. Morbi quis mauris non odio congue interdum vel et velit. Nullam at maximus tellus.",
+          },
+        ],
+      };
+      return article;
+    },
+    logout: (parent: any, args: any, context: Context, info: any) => {
+      // const token = context.jwtToken;
+      // if(!token) return;
+      // return userController.logout(token);
+      return false;
+    },
+    refresh: (parent: any, args: any, context: Context, info: any) => {
+      const token = context.jwtToken;
+      if (!token) return;
+      return userController.refresh(token);
+    },
+    latestNews: (
+      _: any,
+      { query, language, page, pageSize }: lastNewsQuery
+    ) => {
+      newsController.latestNews(query, language, page, pageSize);
+    },
+  },
+  Mutation: {
+    signup: (_: any, { email, password }: logInOutArgs) => {
+      userController.signup(email, password);
+    },
+    login: (_: any, { email, password }: logInOutArgs) => {
+      userController.login(email, password);
+    },
+    activate: (_: any, { link }: any) => {
+      userController.activate(link);
+    },
+    addFavourite: (_: any, { article }: { article: Article }) => {
+      userController.addFavourite(article);
+    },
+  },
 };

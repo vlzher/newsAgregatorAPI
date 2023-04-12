@@ -1,6 +1,5 @@
-const { gql } = require("apollo-server");
-
-const typeDefs = gql`
+import { gql } from 'apollo-server-core';
+export const typeDefs = gql`
   type User {
     email: String!
     password: String!
@@ -8,30 +7,49 @@ const typeDefs = gql`
     activationLink: String
   }
   type Token {
-    user : User
+    user: User
     token: String!
   }
+  input ArticleInput {
+  title: String!
+  author: String
+  description: String
+  url: String!
+  urlToImage: String
+  publishedAt: String
+  content: String
+  }
+  type ArticleUser {
+    user: User
+    articles: [Article]
+  }
   type Article {
-    User: User
-    title: String!,
-    author: String,
-    description: String,
-    url: String!,
-    urlToImage: String,
-    publishedAt: String,
-    content: String,
+    title: String!
+    author: String
+    description: String
+    url: String!
+    urlToImage: String
+    publishedAt: String
+    content: String
+  }
+  type RefreshResponse {
+    refreshToken: Token
+    accessToken: Token
+    user: User
   }
   type Query {
     user: User
-    getFavourites: [Article]
+    favourites: ArticleUser
     logout: Boolean
-    refresh: [Token, Token, User]
+    refresh: RefreshResponse
+    latestNews(query: String, language: String, page: String, pageSize: String): [Article]
   }
   type Mutation {
-      signup(email: String!, password: String!): Token
-      login(email: String!, password: String!): Token
-      activate(link: String!): Boolean
-      latestNews(query: String, language: String, page: String, pageSize: String): [Article]
-      addFavourite(article: Article): Boolean        
-  }  
+    signup(email: String!, password: String!): Token
+    login(email: String!, password: String!): Token
+    activate(link: String!): Boolean
+    addFavourite(article: ArticleInput): Boolean
+  }
+  
 `;
+

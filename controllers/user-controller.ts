@@ -27,12 +27,8 @@ export class UserController {
         return true;
     }
 
-    async latestNews(query: string, language: string, page: number, pageSize: number) {
-
-    }
-
     async addFavourite(article: any) {
-
+        return true;
     }
 
 }
