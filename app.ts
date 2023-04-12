@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -7,10 +9,10 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { typeDefs } from "./router/typeDefs.js";
 import { resolvers } from "./router/resolvers.js";
+import {connectDB} from "./db/connection.js";
 export interface Context {
   jwtToken?: string;
 }
-
 const app = express();
 const httpServer = http.createServer(app);
 const server = new ApolloServer<Context>({
@@ -19,6 +21,7 @@ const server = new ApolloServer<Context>({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 await server.start();
+connectDB();
 
 app.use(
   "/api",

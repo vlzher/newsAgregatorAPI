@@ -39,49 +39,15 @@ export const resolvers = {
       return user;
     },
     favourites: (parent: any, args: any, context: Context, info: any) => {
-      // const token = context.jwtToken;
-      // if(!token) return;
-      // const favourites  = userController.getFavourites(token);
-      // return favourites;
-      const article = {
-        user: {
-          email: "chuj",
-          password: "chuj",
-          isActivated: true,
-          activationLink: "chuj",
-        },
-        articles: [
-          {
-            title: "Example Article",
-            author: "Jane Smith",
-            description:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            url: "http://example.com/article",
-            urlToImage: "http://example.com/article/image.jpg",
-            publishedAt: "2023-04-12T10:00:00.000Z",
-            content:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod urna a tellus convallis lobortis. Proin et velit urna. Donec laoreet, velit id fringilla consectetur, lectus est porta dolor, vel aliquam mi urna nec nunc. Integer rhoncus quam vel arcu maximus luctus. Duis finibus mauris enim, ac sagittis eros feugiat sit amet. Morbi quis mauris non odio congue interdum vel et velit. Nullam at maximus tellus.",
-          },
-          {
-            title: "Example Article",
-            author: "Jane Smith",
-            description:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            url: "http://example.com/article",
-            urlToImage: "http://example.com/article/image.jpg",
-            publishedAt: "2023-04-12T10:00:00.000Z",
-            content:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod urna a tellus convallis lobortis. Proin et velit urna. Donec laoreet, velit id fringilla consectetur, lectus est porta dolor, vel aliquam mi urna nec nunc. Integer rhoncus quam vel arcu maximus luctus. Duis finibus mauris enim, ac sagittis eros feugiat sit amet. Morbi quis mauris non odio congue interdum vel et velit. Nullam at maximus tellus.",
-          },
-        ],
-      };
-      return article;
+      const token = context.jwtToken;
+      if (!token) return;
+      const favourites = userController.getFavourites(token);
+      return favourites;
     },
     logout: (parent: any, args: any, context: Context, info: any) => {
-      // const token = context.jwtToken;
-      // if(!token) return;
-      // return userController.logout(token);
-      return false;
+      const token = context.jwtToken;
+      if (!token) return;
+      return userController.logout(token);
     },
     refresh: (parent: any, args: any, context: Context, info: any) => {
       const token = context.jwtToken;
@@ -105,8 +71,19 @@ export const resolvers = {
     activate: (_: any, { link }: any) => {
       userController.activate(link);
     },
-    addFavourite: (_: any, { article }: { article: Article }) => {
-      userController.addFavourite(article);
+    addFavourite: (
+      _: any,
+      { article }: { article: Article },
+      context: Context
+    ) => {
+      userController.addFavourite(article, context.jwtToken);
+    },
+    removeFavourite: (
+      _: any,
+      { title }: { title: string },
+      context: Context
+    ) => {
+      userController.removeFavourite(title, context.jwtToken);
     },
   },
 };

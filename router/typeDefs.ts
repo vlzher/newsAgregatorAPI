@@ -49,6 +49,7 @@ export const typeDefs = gql`
     login(email: String!, password: String!): Token
     activate(link: String!): Boolean
     addFavourite(article: ArticleInput): Boolean
+    removeFavourite(title: String!): Boolean
   }
   
 `;

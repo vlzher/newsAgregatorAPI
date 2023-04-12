@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
+import {getNews} from "../../api/api.js";
 const Schema = mongoose.Schema;
 
-const favouriteScheme = mongoose.model('Favourite', new Schema({
-    userID: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    articleID: {type: mongoose.Schema.Types.ObjectId, ref: 'Article'},
+const favouriteArticleScheme = mongoose.model('FavouriteArticle', new Schema({
+    user: {type: Schema.Types.ObjectId, ref: 'User'},
+    article: {type: Schema.Types.ObjectId, ref: 'Article'}
 }));
-
-export { favouriteScheme };
+export { favouriteArticleScheme };
+// const favouriteArticle = new FavouriteArticle({
+//     user: userId,
+//     article: articleId
+// });
+// const favouriteArticles = await FavouriteArticle.find().populate('user').populate('article');
